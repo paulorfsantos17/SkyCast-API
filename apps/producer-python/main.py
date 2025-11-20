@@ -1,0 +1,1 @@
+print("Python producer is running inside docker")

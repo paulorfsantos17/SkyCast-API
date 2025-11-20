@@ -1,0 +1,14 @@
+services:
+  python-producer:
+    image: python:3.11
+    working_dir: /app
+    volumes:
+      - ./apps/producer-python:/app
+    command: >
+      sh -c "
+        pip install poetry &&
+        poetry config virtualenvs.create false &&
+        poetry install &&
+        poetry run python main.py
+      "
+    
