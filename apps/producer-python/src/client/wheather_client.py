@@ -3,17 +3,18 @@ from src.config.settings import settings
 
 
 def get_weather_data():
-  url = (
-        "https://api.open-meteo.com/v1/forecast"
-        f"?latitude={settings.LATITUDE}"
-        f"&longitude={settings.LONGITUDE}"
-        "&current=temperature_2m,relative_humidity_2m,wind_speed_10m"
-        "&hourly=precipitation_probability"
-        "&timezone=auto"
-  )
+  
+  url_base = "https://api.open-meteo.com/v1/forecast"
+  
+  params  = {
+    "latitude": settings.LATITUDE,
+    "longitude": settings.LONGITUDE,
+    "current": "temperature_2m,relative_humidity_2m,windspeed_10m,weathercode,precipitation_probability",
+    "timezone": "America/Sao_Paulo"
+}
   
   try:
-    response = requests.get(url, timeout=10)
+    response = requests.get(url_base, params=params,timeout=10)
     response.raise_for_status()
     return response.json()
   
