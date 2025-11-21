@@ -1,6 +1,6 @@
 class Settings:
-  LATITUDE: float = -22.355705866016237
-  LONGITUDE: float = -45.78171520909098
+  LATITUDE: float =  -22.2341
+  LONGITUDE: float = -45.9332
   
 
 settings = Settings()
