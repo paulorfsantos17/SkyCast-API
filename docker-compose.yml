@@ -4,6 +4,8 @@ services:
     working_dir: /app
     volumes:
       - ./apps/producer-python:/app
+    env_file:
+      - ./.env
     depends_on:
       - rabbitmq
     command: >
@@ -27,6 +29,8 @@ services:
     working_dir: /app
     volumes:
       - ./apps/worker-go:/app
+    env_file:
+      - ./.env
     depends_on:
       - rabbitmq
     command: go run ./cmd/worker/main.go

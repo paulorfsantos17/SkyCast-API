@@ -10,5 +10,8 @@ class Settings:
   
   INTERVAL_SECONDS = 10
   
+  class Config:
+        env_file = ".env"
+  
 
 settings = Settings()
