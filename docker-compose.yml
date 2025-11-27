@@ -8,7 +8,6 @@ services:
       - rabbitmq
     command: >
       sh -c "
-        ./wait-for-it.sh rabbitmq:5672 -- 
         pip install poetry &&
         poetry config virtualenvs.create false &&
         poetry install &&
@@ -22,3 +21,14 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+  worker-go:
+    image: golang:1.20
+    container_name: worker-go
+    working_dir: /app
+    volumes:
+      - ./apps/worker-go:/app
+    depends_on:
+      - rabbitmq
+    command: go run ./cmd/worker/main.go
+    restart: unless-stopped
+  
