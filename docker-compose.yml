@@ -24,15 +24,15 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
   worker-go:
-    image: golang:1.20
-    container_name: worker-go
+    build:
+      context: ./apps/worker_go
+    container_name: worker_go
     working_dir: /app
     volumes:
-      - ./apps/worker-go:/app
+      - ./apps/worker_go:/app    # <<< HOT RELOAD
     env_file:
       - ./.env
     depends_on:
       - rabbitmq
-    command: go run ./cmd/worker/main.go
+      - python-producer
     restart: unless-stopped
-  

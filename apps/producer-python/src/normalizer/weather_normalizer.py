@@ -34,11 +34,11 @@ def normalize_weather_data(raw_data):
     condition = WEATHER_CONDITIONS.get(weather_code, "Desconhecido")
 
     normalized_data = {
-        "temperatura": temperature,
-        "umidade": humidity,
-        "velocidade_vento": wind_speed,
-        "condicao_ceu": condition,
-        "probabilidade_chuva": rain_probability,
+        "temperature": temperature,
+        "humidity": humidity,
+        "wind_speed": wind_speed,
+        "condition": condition,
+        "rain_probability": rain_probability,
         "timestamp": time_strings
     }
 
