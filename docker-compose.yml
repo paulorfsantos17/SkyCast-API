@@ -36,3 +36,18 @@ services:
       - rabbitmq
       - python-producer
     restart: unless-stopped
+  nest-dev:
+    image: node:22.16.0-alpine
+    container_name: nest-dev
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/api:/app
+    env_file:
+      - ./.env
+    command:  sh -c "
+      npm install -g pnpm @nestjs/cli &&
+      pnpm i &&
+      pnpm start:dev"
+    
