@@ -1,13 +1,9 @@
 package queue
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
-	"worker/internal/log"
-	"worker/internal/models"
-	"worker/internal/service"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -16,9 +12,9 @@ func Consume(ch *amqp.Channel, queueName string) error {
 
 	// Aguarda a fila existir
 	for i := 1; i <= 20; i++ {
-		_, err := ch.QueueDeclarePassive(
+		_, err := ch.QueueDeclare(
 			queueName,
-			true,
+			false,
 			false,
 			false,
 			false,
@@ -31,7 +27,7 @@ func Consume(ch *amqp.Channel, queueName string) error {
 		}
 
 		fmt.Printf("[Queue] Fila '%s' ainda não existe. Tentativa %d/20...\n", queueName, i)
-		time.Sleep(2 * time.Second)
+		time.Sleep(5 * time.Second)
 
 		if i == 20 {
 			return fmt.Errorf("fila '%s' não encontrada após múltiplas tentativas", queueName)
