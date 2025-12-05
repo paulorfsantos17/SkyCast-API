@@ -14,9 +14,11 @@ def main_loop():
                 raw_data = get_weather_data()
                 weather = normalize_weather_data(raw_data)
                 publisher.publish(weather)
+                print(f"Proxima coleta em {settings.INTERVAL_SECONDS} segundos")
             except Exception as e:
                 print(f"Erro ao coletar/enviar dados: {e}")
             time.sleep(settings.INTERVAL_SECONDS)
+        
     finally:
         publisher.close()
 

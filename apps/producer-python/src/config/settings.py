@@ -1,17 +1,21 @@
-class Settings:
-  LATITUDE: float =  -22.2341
-  LONGITUDE: float = -45.9332
-  
-  RABBITMQ_HOST = 'rabbitmq'
-  RABBITMQ_USER = 'guest'
-  RABBITMQ_PASS = 'guest'
-  RABBITMQ_PORT = 5672
-  QUEUE_NAME = 'weather_data'
-  
-  INTERVAL_SECONDS = 10
-  
-  class Config:
+from pydantic_settings import BaseSettings
+
+
+class Settings(BaseSettings):
+    LATITUDE: str = "-22.2341"
+    LONGITUDE: str = "-45.9332"
+    
+    RABBITMQ_HOST: str = 'rabbitmq'
+    RABBITMQ_USER: str = 'guest'
+    RABBITMQ_PASS: str = 'guest'
+    RABBITMQ_PORT: int = 5672
+    QUEUE_NAME: str = 'weather_data'
+    
+    INTERVAL_SECONDS: int = 60
+    
+    class Config:
         env_file = ".env"
-  
+        env_file_encoding = 'utf-8'
+
 
 settings = Settings()

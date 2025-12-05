@@ -35,6 +35,7 @@ services:
     depends_on:
       - rabbitmq
       - python-producer
+      - nest-dev
     restart: unless-stopped
   nest-dev:
     build:

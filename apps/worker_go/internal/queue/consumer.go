@@ -1,9 +1,12 @@
 package queue
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
+	"worker/internal/models"
+	"worker/internal/service"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -50,6 +53,15 @@ func Consume(ch *amqp.Channel, queueName string) error {
 
 	for msg := range messages {
 		fmt.Printf("📦 Mensagem recebida: %s\n", string(msg.Body))
+		
+		var weatherMsg models.WeatherMessageBroken
+		err := json.Unmarshal(msg.Body, &weatherMsg)
+		if err != nil {
+			fmt.Printf("❌ Erro ao deserializar mensagem: %v\n", err)
+			continue
+		}
+
+		go service.ProcessWeatherData(weatherMsg)
 	}
 
 	return nil
