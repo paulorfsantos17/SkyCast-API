@@ -13,6 +13,7 @@ import {
 import { ZodValidationPipe } from 'src/core/pipes/zod-validation.pipe';
 import { CreateUser } from '../../application/use-cases/create-user';
 import { GetUserById } from '../../application/use-cases/get-user-by-id';
+import { GetUsers } from '../../application/use-cases/get-users';
 import { UpdateUser } from '../../application/use-cases/update-user';
 import { createUserSchema, type CreateUserDto } from '../dtos/create-user-dto';
 import { updateUserSchema, type UpdateUserDto } from '../dtos/update-user-dto';
@@ -22,7 +23,8 @@ export class UserController {
   constructor(
     private updateUser: UpdateUser, 
     private createUser: CreateUser,
-    private getUserById: GetUserById
+    private getUserById: GetUserById,
+    private getUsers: GetUsers
   ) {}
 
   @Post()
@@ -59,6 +61,13 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
     const result = await this.getUserById.execute({ id });
+    return result;
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async findAll() {
+    const result = await this.getUsers.execute();
     return result;
   }
 

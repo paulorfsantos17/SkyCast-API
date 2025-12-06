@@ -4,6 +4,7 @@ import { UserRepository } from 'src/contexts/identity/application/repositories/u
 import { HashService } from 'src/contexts/identity/application/service/hash-service';
 import { CreateUser } from 'src/contexts/identity/application/use-cases/create-user';
 import { GetUserById } from 'src/contexts/identity/application/use-cases/get-user-by-id';
+import { GetUsers } from 'src/contexts/identity/application/use-cases/get-users';
 import { UpdateUser } from 'src/contexts/identity/application/use-cases/update-user';
 import { UserController } from 'src/contexts/identity/infra/http/user-controller';
 import { MongooseUserRepository } from 'src/contexts/identity/infra/repositories/mongo/mongoose-user-repository';
@@ -24,6 +25,7 @@ import { UserDocument, UserSchema } from 'src/infra/database/schemas/user-schema
     CreateUser,
     UpdateUser,
     GetUserById,
+    GetUsers,
     {
       provide: UserRepository,
       useClass: MongooseUserRepository,
