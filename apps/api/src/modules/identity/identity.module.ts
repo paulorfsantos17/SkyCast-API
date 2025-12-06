@@ -11,6 +11,7 @@ import { GetUsers } from 'src/contexts/identity/application/use-cases/get-users'
 import { Login } from 'src/contexts/identity/application/use-cases/login';
 import { RefreshToken } from 'src/contexts/identity/application/use-cases/refresh-token';
 import { UpdateUser } from 'src/contexts/identity/application/use-cases/update-user';
+import { JwtStrategy } from 'src/contexts/identity/infra/auth/jwt-strategy';
 import { AuthController } from 'src/contexts/identity/infra/http/auth-service-controller';
 import { UserController } from 'src/contexts/identity/infra/http/user-controller';
 import { MongooseUserRepository } from 'src/contexts/identity/infra/repositories/mongo/mongoose-user-repository';
@@ -32,6 +33,7 @@ import { IdentityMongoModule } from 'src/infra/database/mongodb/identity-mongo.m
     RefreshToken,
     AuthenticateUser,
     Login,
+    JwtStrategy,
     {
       provide: UserRepository,
       useClass: MongooseUserRepository,
