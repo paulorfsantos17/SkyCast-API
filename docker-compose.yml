@@ -77,6 +77,20 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: root
     depends_on:
       - mongo
-
+  frontend:
+    build:
+      context: ./apps/frontend
+    container_name: frontend
+    working_dir: /app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://nest-dev:3000
+    depends_on:
+      - nest-dev
+    restart: unless-stopped
 volumes:
   mongo_data:
