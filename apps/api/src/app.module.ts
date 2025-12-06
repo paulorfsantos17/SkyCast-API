@@ -1,12 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongoModule } from './infra/database/mongo.module';
+import { IdentityModule } from './infra/database/mongodb/identity-mongo.module';
 import { WeatherModule } from './modules/weather/weather.module';
 
 @Module({
-  imports: [MongoModule, WeatherModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [MongoModule, WeatherModule, IdentityModule],
 })
 export class AppModule {}
