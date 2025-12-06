@@ -1,4 +1,5 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Public } from 'src/core/decorators/public-decorators';
 import { ZodValidationPipe } from 'src/core/pipes/zod-validation.pipe';
 import { Login } from '../../application/use-cases/login';
 import { RefreshToken } from '../../application/use-cases/refresh-token';
@@ -12,6 +13,7 @@ export class AuthController {
     private refreshToken: RefreshToken,
   ) {}
 
+  @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async handleLogin(@Body(new ZodValidationPipe(loginSchema)) body: LoginDto) {
@@ -22,7 +24,7 @@ export class AuthController {
 
     return result;
   }
-
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async handleRefresh(@Body(new ZodValidationPipe(refreshTokenSchema)) body: RefreshTokenDto) {

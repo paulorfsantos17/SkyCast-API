@@ -11,6 +11,7 @@ import {
   UsePipes
 } from '@nestjs/common';
 
+import { Public } from 'src/core/decorators/public-decorators';
 import { ZodValidationPipe } from 'src/core/pipes/zod-validation.pipe';
 import { CreateUser } from '../../application/use-cases/create-user';
 import { DeleteUser } from '../../application/use-cases/delete-user';
@@ -29,7 +30,7 @@ export class UserController {
     private getUsers: GetUsers,
     private deleteUser: DeleteUser
   ) {}
-
+  @Public()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ZodValidationPipe(createUserSchema))
