@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongoModule } from './infra/database/mongo.module';
-import { IdentityModule } from './infra/database/mongodb/identity-mongo.module';
+import { IdentityModule } from './modules/identity/identity.module';
 import { WeatherModule } from './modules/weather/weather.module';
 
 @Module({
