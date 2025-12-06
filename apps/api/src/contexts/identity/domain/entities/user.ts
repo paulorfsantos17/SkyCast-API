@@ -40,6 +40,10 @@ export class User extends BaseEntity<UserProps> {
     this.updateProps({ name: newName });
   }
 
+  updateRole(newRole: string): void {
+    this.updateProps({ role: newRole });
+  }
+
   public static create(props: UserProps, id?: string, createdAt?: Date, updatedAt?: Date): User {
     return new User(props, id, createdAt, updatedAt);
   }

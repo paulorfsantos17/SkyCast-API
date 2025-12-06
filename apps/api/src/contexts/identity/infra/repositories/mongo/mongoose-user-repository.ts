@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import type { UserRepository } from 'src/contexts/identity/application/repositories/user-repository';
-import type { User } from 'src/contexts/identity/domain/entities/user';
 import { UserDocument } from 'src/infra/database/schemas/user-schema';
+import { UserRepository } from '../../../application/repositories/user-repository';
+import { User } from '../../../domain/entities/user';
 import { UserMapper } from './mappers/user-mapper';
-
 
 @Injectable()
 export class MongooseUserRepository implements UserRepository {

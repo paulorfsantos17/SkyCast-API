@@ -1,6 +1,4 @@
-import { User } from "src/contexts/identity/domain/entities/user";
-
-
+import { User } from 'src/contexts/identity/domain/entities/user';
 export class UserMapper {
   static toDomain(document: any): User {
     return User.create(
@@ -10,7 +8,7 @@ export class UserMapper {
         name: document.name,
         role: document.role,
       },
-      document._id?.toString(),
+      document._id,
       document.createdAt,
       document.updatedAt,
     );
@@ -18,6 +16,7 @@ export class UserMapper {
 
   static toPersistence(user: User) {
     return {
+      _id: user.id,
       email: user.email,
       password: user.password,
       name: user.name,

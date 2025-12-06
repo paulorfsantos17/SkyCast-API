@@ -3,17 +3,23 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Put,
   UsePipes
 } from '@nestjs/common';
 
 import { ZodValidationPipe } from 'src/core/pipes/zod-validation.pipe';
 import { CreateUser } from '../../application/use-cases/create-user';
+import { UpdateUser } from '../../application/use-cases/update-user';
 import { createUserSchema, type CreateUserDto } from '../dtos/create-user-dto';
+import { updateUserSchema, type UpdateUserDto } from '../dtos/update-user-dto';
 
 @Controller('users')
 export class UserController {
-  constructor(private createUser: CreateUser) {}
+  constructor(
+    private updateUser: UpdateUser, 
+    private createUser: CreateUser) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -28,4 +34,21 @@ export class UserController {
 
     return result;
   }
+
+  @Put(':id')
+  @HttpCode(HttpStatus.OK)
+  async update(
+    @Param('id') id: string, 
+    @Body(new ZodValidationPipe(updateUserSchema)) body: UpdateUserDto
+  ) {
+    const result = await this.updateUser.execute({
+      id,
+      name: body.name,
+      password: body.password,
+      role: body.role,
+    });
+
+    return result;
+  }
+
 }
