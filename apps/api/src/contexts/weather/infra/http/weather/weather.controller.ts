@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Query, Res, UsePipes } from "@nestjs/commo
 import { type Response } from "express";
 import { CreateWeatherLogUseCase } from "src/contexts/weather/application/use-cases/create-weather-log";
 import { ExportWeatherLogs } from "src/contexts/weather/application/use-cases/export-weather-logs.ts";
+import { GenerateWeatherInsights } from "src/contexts/weather/application/use-cases/generate-weather-insights";
 import { GetWeatherLogs } from "src/contexts/weather/application/use-cases/get-weather-logs";
 import { ZodValidationPipe } from "src/core/pipes/zod-validation.pipe";
 import { CreateWeatherLogSchema, type CreateWeatherLogDTO } from "../../dtos/create-weather-log-dto";
@@ -12,7 +13,8 @@ export class WeatherController {
   constructor(
     private readonly getWeatherLogs: GetWeatherLogs, 
     private readonly createWeather: CreateWeatherLogUseCase,
-    private readonly exportWeatherLogs: ExportWeatherLogs
+    private readonly exportWeatherLogs: ExportWeatherLogs,
+    private readonly generateWeatherInsights: GenerateWeatherInsights
   ) {}
 
   @Post("/log")
@@ -45,5 +47,14 @@ export class WeatherController {
     res.send(buffer);
   }
 
+  
+  @Get('/insights')
+  async getInsights(@Query('days') days?: string) {
+    const result = await this.generateWeatherInsights.execute({
+      days: days ? parseInt(days) : 7,
+    });
+
+    return result;
+  }
 
 }
