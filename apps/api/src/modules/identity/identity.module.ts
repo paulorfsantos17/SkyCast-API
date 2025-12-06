@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { UserRepository } from 'src/contexts/identity/application/repositories/user-repository';
 import { HashService } from 'src/contexts/identity/application/service/hash-service';
 import { CreateUser } from 'src/contexts/identity/application/use-cases/create-user';
@@ -12,7 +13,9 @@ import { BcryptHashService } from 'src/contexts/identity/infra/services/bcrypt-h
 import { IdentityMongoModule } from 'src/infra/database/mongodb/identity-mongo.module';
 
 @Module({
-  imports: [IdentityMongoModule],
+  imports: [IdentityMongoModule, JwtModule.register({
+    global: false,
+  })],
   controllers: [UserController],
   providers: [
     CreateUser,
