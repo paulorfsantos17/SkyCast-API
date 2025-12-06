@@ -6,13 +6,13 @@ from src.config.settings import settings
 
 
 class MessagePublisher:
-    def __init__(self, max_retries=10, retry_delay=5):
-        # Agora usa o retry corretamente
-        self.connection = self._connect_with_retry(max_retries, retry_delay)
-        self.channel = self.connection.channel()
-        self.channel.queue_declare(queue=settings.QUEUE_NAME)
+    def __init__(self, max_retries=5, retry_delay=5):
+        self.max_retries = max_retries
+        self.retry_delay = retry_delay
+        # NÃO criar conexão no __init__
 
-    def _connect_with_retry(self, max_retries, retry_delay):
+    def _create_connection(self):
+        """Cria uma nova conexão com retry"""
         credentials = pika.PlainCredentials(
             settings.RABBITMQ_USER,
             settings.RABBITMQ_PASS,
@@ -22,30 +22,50 @@ class MessagePublisher:
             host=settings.RABBITMQ_HOST,
             port=settings.RABBITMQ_PORT,
             credentials=credentials,
+            # Sem heartbeat - conexão é efêmera
         )
 
-        retries = 0
-        while retries < max_retries:
+        for attempt in range(1, self.max_retries + 1):
             try:
-                print(f"[Publisher] Tentando conectar ao RabbitMQ... ({retries+1}/{max_retries})")
+                print(f"🔌 Conectando ao RabbitMQ (tentativa {attempt}/{self.max_retries})...")
                 connection = pika.BlockingConnection(params)
-                print("[Publisher] Conectado com sucesso ao RabbitMQ!")
+                print("✅ Conectado ao RabbitMQ!")
                 return connection
 
             except pika.exceptions.AMQPConnectionError as e:
-                print(f"[Publisher] Falha na conexão: {e}. Tentando novamente em {retry_delay}s...")
-                retries += 1
-                time.sleep(retry_delay)
-
-        raise Exception("Não foi possível conectar ao RabbitMQ após múltiplas tentativas.")
+                print(f"❌ Falha na conexão: {e}")
+                if attempt < self.max_retries:
+                    print(f"⏳ Tentando novamente em {self.retry_delay}s...")
+                    time.sleep(self.retry_delay)
+                else:
+                    raise Exception(f"Não foi possível conectar ao RabbitMQ após {self.max_retries} tentativas.")
 
     def publish(self, message: dict):
-        self.channel.basic_publish(
-            exchange="",
-            routing_key=settings.QUEUE_NAME,
-            body=json.dumps(message),
-        )
-        print(f"[Publisher] Mensagem enviada para fila ({settings.QUEUE_NAME}): {message.get('timestamp')}")
+        """Cria conexão, publica mensagem e fecha imediatamente"""
+        connection = None
+        try:
+            # Criar nova conexão
+            connection = self._create_connection()
+            channel = connection.channel()
+            
+            # Declarar fila (idempotente)
+            channel.queue_declare(queue=settings.QUEUE_NAME, durable=False)
+            
+            # Publicar mensagem
+            channel.basic_publish(
+                exchange="",
+                routing_key=settings.QUEUE_NAME,
+                body=json.dumps(message, default=str),
+            )
+            
+            print(f"📤 Mensagem enviada para fila ({settings.QUEUE_NAME}): {message.get('timestamp')}")
+            
+        finally:
+            # Sempre fechar a conexão
+            if connection and not connection.is_closed:
+                connection.close()
+                print("🔌 Conexão fechada")
 
     def close(self):
-        self.connection.close()
+        """Não precisa fazer nada - cada publish já fecha sua conexão"""
+        print("👋 Publisher encerrado")
