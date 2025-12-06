@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserRepository } from 'src/contexts/identity/application/repositories/user-repository';
 import { HashService } from 'src/contexts/identity/application/service/hash-service';
 import { CreateUser } from 'src/contexts/identity/application/use-cases/create-user';
+import { DeleteUser } from 'src/contexts/identity/application/use-cases/delete-user';
 import { GetUserById } from 'src/contexts/identity/application/use-cases/get-user-by-id';
 import { GetUsers } from 'src/contexts/identity/application/use-cases/get-users';
 import { UpdateUser } from 'src/contexts/identity/application/use-cases/update-user';
@@ -26,6 +27,7 @@ import { UserDocument, UserSchema } from 'src/infra/database/schemas/user-schema
     UpdateUser,
     GetUserById,
     GetUsers,
+    DeleteUser,
     {
       provide: UserRepository,
       useClass: MongooseUserRepository,

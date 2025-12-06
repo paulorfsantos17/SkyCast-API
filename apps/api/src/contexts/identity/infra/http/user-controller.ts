@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -12,6 +13,7 @@ import {
 
 import { ZodValidationPipe } from 'src/core/pipes/zod-validation.pipe';
 import { CreateUser } from '../../application/use-cases/create-user';
+import { DeleteUser } from '../../application/use-cases/delete-user';
 import { GetUserById } from '../../application/use-cases/get-user-by-id';
 import { GetUsers } from '../../application/use-cases/get-users';
 import { UpdateUser } from '../../application/use-cases/update-user';
@@ -24,7 +26,8 @@ export class UserController {
     private updateUser: UpdateUser, 
     private createUser: CreateUser,
     private getUserById: GetUserById,
-    private getUsers: GetUsers
+    private getUsers: GetUsers,
+    private deleteUser: DeleteUser
   ) {}
 
   @Post()
@@ -69,6 +72,12 @@ export class UserController {
   async findAll() {
     const result = await this.getUsers.execute();
     return result;
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
+    await this.deleteUser.execute({ id });
   }
 
 }
