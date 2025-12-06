@@ -1,5 +1,7 @@
-import { Body, Controller, Get, Post, Query, UsePipes } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, Res, UsePipes } from "@nestjs/common";
+import { type Response } from "express";
 import { CreateWeatherLogUseCase } from "src/contexts/weather/application/use-cases/create-weather-log";
+import { ExportWeatherLogs } from "src/contexts/weather/application/use-cases/export-weather-logs.ts";
 import { GetWeatherLogs } from "src/contexts/weather/application/use-cases/get-weather-logs";
 import { ZodValidationPipe } from "src/core/pipes/zod-validation.pipe";
 import { CreateWeatherLogSchema, type CreateWeatherLogDTO } from "../../dtos/create-weather-log-dto";
@@ -9,7 +11,8 @@ import { GetWeatherLogsQuerySchema, type GetWeatherLogsQueryDTO } from "../../dt
 export class WeatherController {
   constructor(
     private readonly getWeatherLogs: GetWeatherLogs, 
-    private readonly createWeather: CreateWeatherLogUseCase
+    private readonly createWeather: CreateWeatherLogUseCase,
+    private readonly exportWeatherLogs: ExportWeatherLogs
   ) {}
 
   @Post("/log")
@@ -22,6 +25,24 @@ export class WeatherController {
   @UsePipes(new ZodValidationPipe(GetWeatherLogsQuerySchema))
   async getLogs(@Query() query: GetWeatherLogsQueryDTO) {
     return await this.getWeatherLogs.execute(query);
+  }
+
+  @Get("/export.csv")
+  async exportCsv(@Res() res: Response) {
+    const buffer = await this.exportWeatherLogs.execute('csv');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', 'attachment; filename="weather-logs.csv"');
+    res.send(buffer);
+  }
+
+  @Get("/export.xlsx")
+  async exportXlsx(@Res() res: Response) {
+    const buffer = await this.exportWeatherLogs.execute('xlsx');
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="weather-logs.xlsx"');
+    res.send(buffer);
   }
 
 
