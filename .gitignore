@@ -8,7 +8,7 @@ apps/api/dist
 apps/api/node_modules
 apps/api/.pnpm-store
 apps/api/build
-
+./env
 # Logs
 logs
 *.log
