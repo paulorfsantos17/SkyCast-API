@@ -19,7 +19,7 @@ export const useLoginViewModel = () => {
 
     try {
       const response = await authService.login(email, password)
-      login(response.access_token, response.user)
+      login(response.accessToken, response.refreshToken, response.user)
       navigate('/dashboard')
     } catch (err: any) {
       setError(err.response?.data?.message || 'Erro ao fazer login')
