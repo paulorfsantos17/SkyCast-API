@@ -1,0 +1,248 @@
+.
+├── .env
+├── .gitignore
+├── README.md
+├── apps
+│   ├── api
+│   │   ├── .prettierrc
+│   │   ├── Dockerfile
+│   │   ├── eslint.config.mjs
+│   │   ├── nest-cli.json
+│   │   ├── package.json
+│   │   ├── pnpm-lock.yaml
+│   │   ├── src
+│   │   │   ├── app.module.ts
+│   │   │   ├── contexts
+│   │   │   │   ├── identity
+│   │   │   │   │   ├── application
+│   │   │   │   │   │   ├── repositories
+│   │   │   │   │   │   │   └── user-repository.ts
+│   │   │   │   │   │   ├── service
+│   │   │   │   │   │   │   ├── hash-service.ts
+│   │   │   │   │   │   │   └── token-service.ts
+│   │   │   │   │   │   └── use-cases
+│   │   │   │   │   │       ├── authenticated-user.ts
+│   │   │   │   │   │       ├── create-user.ts
+│   │   │   │   │   │       ├── delete-user.ts
+│   │   │   │   │   │       ├── get-user-by-id.ts
+│   │   │   │   │   │       ├── get-users.ts
+│   │   │   │   │   │       ├── login.ts
+│   │   │   │   │   │       ├── refresh-token.ts
+│   │   │   │   │   │       └── update-user.ts
+│   │   │   │   │   ├── domain
+│   │   │   │   │   │   └── entities
+│   │   │   │   │   │       └── user.ts
+│   │   │   │   │   └── infra
+│   │   │   │   │       ├── auth
+│   │   │   │   │       │   ├── jwt-auth-guard.ts
+│   │   │   │   │       │   └── jwt-strategy.ts
+│   │   │   │   │       ├── dtos
+│   │   │   │   │       │   ├── create-user-dto.ts
+│   │   │   │   │       │   ├── login-schema-dto.ts
+│   │   │   │   │       │   ├── refresh-token-dto.ts
+│   │   │   │   │       │   └── update-user-dto.ts
+│   │   │   │   │       ├── http
+│   │   │   │   │       │   ├── auth-service-controller.ts
+│   │   │   │   │       │   └── user-controller.ts
+│   │   │   │   │       ├── repositories
+│   │   │   │   │       │   └── mongo
+│   │   │   │   │       │       ├── mappers
+│   │   │   │   │       │       │   └── user-mapper.ts
+│   │   │   │   │       │       └── mongoose-user-repository.ts
+│   │   │   │   │       └── services
+│   │   │   │   │           ├── bcrypt-hash-service.ts
+│   │   │   │   │           └── jwt-token-service.ts
+│   │   │   │   └── weather
+│   │   │   │       ├── application
+│   │   │   │       │   ├── repositories
+│   │   │   │       │   │   └── weather-repository.ts
+│   │   │   │       │   ├── services
+│   │   │   │       │   │   └── gemini-ai.service.ts
+│   │   │   │       │   └── use-cases
+│   │   │   │       │       ├── apps
+│   │   │   │       │       ├── create-weather-log.ts
+│   │   │   │       │       ├── export-weather-logs.ts.ts
+│   │   │   │       │       ├── generate-weather-insights.ts
+│   │   │   │       │       └── get-weather-logs.ts
+│   │   │   │       ├── domain
+│   │   │   │       │   └── entities
+│   │   │   │       │       ├── weather-insight.ts
+│   │   │   │       │       └── weather-log.ts
+│   │   │   │       └── infra
+│   │   │   │           ├── dtos
+│   │   │   │           │   ├── create-weather-log-dto.ts
+│   │   │   │           │   └── get-weather-logs-dtos.ts
+│   │   │   │           ├── http
+│   │   │   │           │   └── weather
+│   │   │   │           │       └── weather.controller.ts
+│   │   │   │           └── repositories
+│   │   │   │               └── mongo
+│   │   │   │                   ├── mappers
+│   │   │   │                   │   └── weather-log-mappers.ts
+│   │   │   │                   └── mongo-weather-log-repository.ts
+│   │   │   ├── core
+│   │   │   │   ├── decorators
+│   │   │   │   │   ├── current-user-decorator.ts
+│   │   │   │   │   └── public-decorators.ts
+│   │   │   │   ├── entities
+│   │   │   │   │   └── base-entity.ts
+│   │   │   │   └── pipes
+│   │   │   │       └── zod-validation.pipe.ts
+│   │   │   ├── infra
+│   │   │   │   └── database
+│   │   │   │       ├── mongo.module.ts
+│   │   │   │       ├── mongodb
+│   │   │   │       │   ├── identity-mongo.module.ts
+│   │   │   │       │   └── weather-mongo.module.ts
+│   │   │   │       └── schemas
+│   │   │   │           ├── user-schema.ts
+│   │   │   │           └── weather-log-schema.ts
+│   │   │   ├── main.ts
+│   │   │   └── modules
+│   │   │       ├── identity
+│   │   │       │   └── identity.module.ts
+│   │   │       └── weather
+│   │   │           └── weather.module.ts
+│   │   ├── test
+│   │   ├── tsconfig.build.json
+│   │   └── tsconfig.json
+│   ├── frontend
+│   │   ├── .gitignore
+│   │   ├── Dockerfile
+│   │   ├── README.md
+│   │   ├── components.json
+│   │   ├── eslint.config.js
+│   │   ├── index.html
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── public
+│   │   │   └── vite.svg
+│   │   ├── src
+│   │   │   ├── App.tsx
+│   │   │   ├── components
+│   │   │   │   ├── ProtectedRoutes.tsx
+│   │   │   │   ├── layout
+│   │   │   │   │   └── Header.tsx
+│   │   │   │   └── ui
+│   │   │   │       ├── alert-dialog.tsx
+│   │   │   │       ├── button.tsx
+│   │   │   │       ├── card.tsx
+│   │   │   │       ├── dialog.tsx
+│   │   │   │       ├── dropdown-menu.tsx
+│   │   │   │       ├── input.tsx
+│   │   │   │       ├── label.tsx
+│   │   │   │       ├── select.tsx
+│   │   │   │       ├── skeleton.tsx
+│   │   │   │       ├── table.tsx
+│   │   │   │       ├── toast.tsx
+│   │   │   │       └── toaster.tsx
+│   │   │   ├── contexts
+│   │   │   │   └── AuthContext.tsx
+│   │   │   ├── hooks
+│   │   │   │   └── use-toast.ts
+│   │   │   ├── index.css
+│   │   │   ├── lib
+│   │   │   │   └── utils.ts
+│   │   │   ├── main.tsx
+│   │   │   ├── models
+│   │   │   │   ├── User.ts
+│   │   │   │   └── WeatherLog.ts
+│   │   │   ├── pages
+│   │   │   │   ├── auth
+│   │   │   │   │   └── LoginPage.tsx
+│   │   │   │   ├── dashboard
+│   │   │   │   │   ├── DashboardPage.tsx
+│   │   │   │   │   └── components
+│   │   │   │   │       ├── AIInsightsCard.tsx
+│   │   │   │   │       ├── CurrentConditionCard.tsx
+│   │   │   │   │       ├── CurrentHumidityCard.tsx
+│   │   │   │   │       ├── CurrentTemperatureCard.tsx
+│   │   │   │   │       ├── CurrentWindSpeedCard.tsx
+│   │   │   │   │       ├── ExportDataCard.tsx
+│   │   │   │   │       ├── HistoricalHumidityChartCard.tsx
+│   │   │   │   │       ├── HistoricalTemperatureChartCard.tsx
+│   │   │   │   │       └── HistoricalWindSpeedChartCard.tsx
+│   │   │   │   └── user
+│   │   │   │       ├── UsersPage.tsx
+│   │   │   │       └── components
+│   │   │   │           ├── UserCreateDialog.tsx
+│   │   │   │           ├── UserDeleteDialog.tsx
+│   │   │   │           ├── UserTable.tsx
+│   │   │   │           └── UserUpdateDialog.tsx
+│   │   │   ├── routes
+│   │   │   │   └── AppRoutes.tsx
+│   │   │   ├── services
+│   │   │   │   ├── api.ts
+│   │   │   │   ├── auth.service.ts
+│   │   │   │   ├── user.service.ts
+│   │   │   │   └── weather.service.ts
+│   │   │   ├── viewmodels
+│   │   │   │   ├── auth.ts
+│   │   │   │   ├── useExportViewModel.ts
+│   │   │   │   ├── useHistoricalWeatherLogsViewModel.ts
+│   │   │   │   ├── useUsersViewModel.ts
+│   │   │   │   ├── useWeatherInsightsViewModel.ts
+│   │   │   │   └── useWeatherLogsViewModel.ts
+│   │   │   └── vite-env.d.ts
+│   │   ├── tailwind.config.js
+│   │   ├── tree_structure.txt
+│   │   ├── tsconfig.app.json
+│   │   ├── tsconfig.json
+│   │   ├── tsconfig.node.json
+│   │   └── vite.config.ts
+│   ├── producer-python
+│   │   ├── .gitkeep
+│   │   ├── __pycache__
+│   │   │   └── main.cpython-311.pyc
+│   │   ├── main.py
+│   │   ├── poetry.lock
+│   │   ├── pyproject.toml
+│   │   └── src
+│   │       ├── client
+│   │       │   ├── __pycache__
+│   │       │   │   └── wheather_client.cpython-311.pyc
+│   │       │   └── wheather_client.py
+│   │       ├── config
+│   │       │   ├── __pycache__
+│   │       │   │   └── settings.cpython-311.pyc
+│   │       │   └── settings.py
+│   │       ├── normalizer
+│   │       │   ├── __pycache__
+│   │       │   │   └── weather_normalizer.cpython-311.pyc
+│   │       │   └── weather_normalizer.py
+│   │       └── publisher
+│   │           ├── __pycache__
+│   │           │   └── message_publisher.cpython-311.pyc
+│   │           └── message_publisher.py
+│   └── worker_go
+│       ├── .air.toml
+│       ├── .gitkeep
+│       ├── Dockerfile
+│       ├── cmd
+│       │   └── worker
+│       │       └── main.go
+│       ├── go.mod
+│       ├── go.sum
+│       ├── internal
+│       │   ├── config
+│       │   │   └── config.go
+│       │   ├── httpclient
+│       │   │   └── httpclient.go
+│       │   ├── log
+│       │   │   └── logger.go
+│       │   ├── models
+│       │   │   └── weather.go
+│       │   ├── queue
+│       │   │   ├── connection.go
+│       │   │   └── consumer.go
+│       │   └── service
+│       │       └── weather_service.go
+│       └── tmp
+│           ├── build-errors.log
+│           └── main
+├── docker-compose.yml
+├── env.example
+└── tree_structure.txt
+
+88 directories, 158 files

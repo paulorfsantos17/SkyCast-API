@@ -1,15 +1,16 @@
-// src/Routes.tsx
 import { Header } from '@/components/layout/Header';
 import { ProtectedRoute } from '@/components/ProtectedRoutes';
 import LoginPage from '@/pages/auth/LoginPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
+import { UsersPage } from '@/pages/user/UsersPage';
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
+
 const ProtectedLayout = () => {
   return (
-    <ProtectedRoute> 
+    <ProtectedRoute>
       <div className="min-h-screen bg-background">
         <main className=" flex flex-col gap-8">
-          <Header />
+          <Header /> 
           <Outlet /> 
         </main>
       </div>
@@ -24,8 +25,10 @@ export function AppRoutes() {
         <Route path="/login" element={<LoginPage />} />
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/users" element={<UsersPage />} /> 
         </Route>
 
       </Routes>

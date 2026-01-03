@@ -16,6 +16,7 @@ export const DashboardPage = () => {
       <CurrentHumidityCard />
       <CurrentWindSpeedCard />
       <CurrentConditionCard />
+      {/* <AIInsightsCard />  */}
       <HistoricalTemperatureChartCard />
       <HistoricalHumidityChartCard />
       <HistoricalWindSpeedChartCard />

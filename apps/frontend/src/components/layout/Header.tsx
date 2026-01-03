@@ -18,6 +18,18 @@ export const Header = () => {
         </div>
 
         <nav className="flex items-center space-x-4">
+        <Link
+          to="/dashboard"
+          className="text-muted-foreground transition-colors hover:text-foreground"
+        >
+          Dashboard
+        </Link>
+        <Link
+          to="/users" 
+          className="text-foreground transition-colors hover:text-foreground"
+        >
+          Usuários
+        </Link>
         </nav>
 
         <div className="flex items-center space-x-4">

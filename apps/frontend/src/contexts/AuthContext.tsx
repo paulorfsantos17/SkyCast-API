@@ -15,6 +15,7 @@ interface AuthContextType {
   login: (accessToken: string, refreshToken: string, user: User) => void
   logout: () => void
   isAuthenticated: boolean
+  isLoading: boolean
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [refreshToken, setRefreshToken] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const storedAccessToken = Cookies.get('accessToken')
@@ -34,6 +36,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setRefreshToken(storedRefreshToken)
       setUser(JSON.parse(storedUser))
     }
+
+    setIsLoading(false)
   }, [])
 
   const login = (newAccessToken: string, newRefreshToken: string, newUser: User) => {
@@ -65,6 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         isAuthenticated: !!accessToken,
+        isLoading,
       }}
     >
       {children}

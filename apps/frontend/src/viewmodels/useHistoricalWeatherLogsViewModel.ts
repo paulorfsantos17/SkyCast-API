@@ -1,3 +1,4 @@
+import { formatTimestamp } from '@/lib/utils'
 import { WeatherLog } from '@/models/WeatherLog'
 import { weatherService } from '@/services/weather.service'
 import { useCallback, useEffect, useState } from 'react'
@@ -27,7 +28,7 @@ export const useHistoricalWeatherLogsViewModel = () => {
         windSpeed: log.props.windSpeed,
         condition: log.props.condition,
         rainProbability: log.props.rainProbability,
-        timestamp: log.props.timestamp,
+        timestamp: formatTimestamp(log.props.timestamp),
       }));
       setHistoricalLogs(mappedLogs.reverse()) 
     } catch (err: any) {

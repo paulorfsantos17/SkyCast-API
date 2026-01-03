@@ -4,6 +4,7 @@ import { CreateWeatherLogUseCase } from "src/contexts/weather/application/use-ca
 import { ExportWeatherLogs } from "src/contexts/weather/application/use-cases/export-weather-logs.ts";
 import { GenerateWeatherInsights } from "src/contexts/weather/application/use-cases/generate-weather-insights";
 import { GetWeatherLogs } from "src/contexts/weather/application/use-cases/get-weather-logs";
+import { Public } from "src/core/decorators/public-decorators";
 import { ZodValidationPipe } from "src/core/pipes/zod-validation.pipe";
 import { CreateWeatherLogSchema, type CreateWeatherLogDTO } from "../../dtos/create-weather-log-dto";
 import { GetWeatherLogsQuerySchema, type GetWeatherLogsQueryDTO } from "../../dtos/get-weather-logs-dtos";
@@ -18,6 +19,7 @@ export class WeatherController {
   ) {}
 
   @Post("/log")
+  @Public()
   @UsePipes(new ZodValidationPipe(CreateWeatherLogSchema))
   async handle(@Body() body: CreateWeatherLogDTO) {
     return await this.createWeather.execute(body);
