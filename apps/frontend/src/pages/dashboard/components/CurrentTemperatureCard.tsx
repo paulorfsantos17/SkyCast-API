@@ -1,6 +1,6 @@
 // src/pages/dashboard/CurrentTemperaturedCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useWeatherLogsViewModel } from '@/viewmodels/useWeatherLogsViewModel'; // Caminho correto
+import { useWeatherLogsViewModel } from '@/services/viewmodels/useWeatherLogsViewModel'; // Caminho correto
 import { Droplet, Thermometer, Wind } from 'lucide-react';
 
 export const CurrentTemperatureCard = () => {

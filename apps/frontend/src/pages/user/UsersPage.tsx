@@ -1,14 +1,14 @@
 // src/pages/users/UsersPage.tsx
 import { Button } from '@/components/ui/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card"
 import { User } from '@/services/user.service'
-import { useUsersViewModel } from '@/viewmodels/useUsersViewModel'
+import { useUsersViewModel } from '@/services/viewmodels/useUsersViewModel'
 import { PlusCircle } from 'lucide-react'
 import { useState } from 'react'
 import { UserCreateDialog } from './components/UserCreateDialog'

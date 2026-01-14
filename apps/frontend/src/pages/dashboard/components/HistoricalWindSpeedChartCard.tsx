@@ -1,7 +1,7 @@
 // src/pages/dashboard/HistoricalWindSpeedChartCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useHistoricalWeatherLogsViewModel } from '@/viewmodels/useHistoricalWeatherLogsViewModel';
+import { useHistoricalWeatherLogsViewModel } from '@/services/viewmodels/useHistoricalWeatherLogsViewModel';
 import { Wind } from 'lucide-react'; // Ícone para velocidade do vento
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 

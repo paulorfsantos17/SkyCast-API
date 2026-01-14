@@ -1,7 +1,7 @@
 // src/pages/dashboard/HistoricalHumidityChartCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useHistoricalWeatherLogsViewModel } from '@/viewmodels/useHistoricalWeatherLogsViewModel'
+import { useHistoricalWeatherLogsViewModel } from '@/services/viewmodels/useHistoricalWeatherLogsViewModel'
 import { Droplet } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 

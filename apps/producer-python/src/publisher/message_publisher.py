@@ -49,7 +49,7 @@ class MessagePublisher:
             channel = connection.channel()
             
             # Declarar fila (idempotente)
-            channel.queue_declare(queue=settings.QUEUE_NAME, durable=False)
+            channel.queue_declare(queue=settings.QUEUE_NAME, durable=True)
             
             # Publicar mensagem
             channel.basic_publish(

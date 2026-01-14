@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-python-deployment
+  namespace: production
+  labels:
+    app: producer-python
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-python
+  template:
+    metadata:
+      labels:
+        app: producer-python
+    spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -s http://rabbitmq-service:15672 > /dev/null; do
+                echo "Aguardando RabbitMQ..."
+                sleep 2
+              done
+              echo "RabbitMQ está pronto!"
+      containers:
+        - name: producer-python
+          image: prfs/producer-python:v1
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: producer-python-config
+            - secretRef:
+                name: producer-python-secret
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"

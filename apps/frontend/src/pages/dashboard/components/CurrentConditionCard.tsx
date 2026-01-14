@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useWeatherLogsViewModel } from '@/viewmodels/useWeatherLogsViewModel'
+import { useWeatherLogsViewModel } from '@/services/viewmodels/useWeatherLogsViewModel'
 import { Cloud, CloudRain, Sun } from 'lucide-react'
 
 export const CurrentConditionCard = () => {

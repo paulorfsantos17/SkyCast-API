@@ -1,7 +1,7 @@
 // src/pages/dashboard/ExportDataCard.tsx
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useExportViewModel } from '@/viewmodels/useExportViewModel'
+import { useExportViewModel } from '@/services/viewmodels/useExportViewModel'
 import { Download, FileSpreadsheet, FileText } from 'lucide-react'
 
 export const ExportDataCard = () => {

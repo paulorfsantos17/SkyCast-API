@@ -31,6 +31,6 @@
   },
   "include": [
     "src",
-    "src/viewmodels/.ts"
+    "src/services/viewmodels/.ts"
   ]
 }

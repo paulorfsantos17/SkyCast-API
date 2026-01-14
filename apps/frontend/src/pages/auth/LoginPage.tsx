@@ -2,7 +2,7 @@ import { Label } from "@radix-ui/react-label"
 import { Button } from "../../components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Input } from "../../components/ui/input"
-import { useLoginViewModel } from "../../viewmodels/auth"
+import { useLoginViewModel } from "../../services/viewmodels/auth"
 
 
 export default function LoginPage() {

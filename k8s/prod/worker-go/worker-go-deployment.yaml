@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-go-deployment 
+  namespace: production
+  labels:
+    app: worker-go
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker-go
+  template:
+    metadata:
+      labels:
+        app: worker-go
+    spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox:1.36
+          command: ['sh', '-c', 'until nc -z rabbitmq-service 5672; do echo waiting for rabbitmq; sleep 2; done;']
+      containers:
+        - name: worker-go
+          image: prfs/worker-go:v1
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: worker-go-config 
+            - secretRef:
+                name: worker-go-secret 
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "100m"

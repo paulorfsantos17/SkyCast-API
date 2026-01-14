@@ -1,7 +1,7 @@
 // src/pages/dashboard/AIInsightsCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useWeatherInsightsViewModel } from '@/viewmodels/useWeatherInsightsViewModel'
+import { useWeatherInsightsViewModel } from '@/services/viewmodels/useWeatherInsightsViewModel'
 import { Brain, Lightbulb, ThumbsUp, TrendingUp } from 'lucide-react'
 
 export const AIInsightsCard = () => {
