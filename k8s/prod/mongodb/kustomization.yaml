@@ -5,3 +5,5 @@ resources:
   - mongo-deployment.yaml
   - mongo-service.yaml
   - mongo-secret.yaml
+  - mongodb-pv.yaml
+  - mongodb-pvc.yaml

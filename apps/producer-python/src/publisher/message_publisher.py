@@ -56,6 +56,9 @@ class MessagePublisher:
                 exchange="",
                 routing_key=settings.QUEUE_NAME,
                 body=json.dumps(message, default=str),
+                properties=pika.BasicProperties(
+                    delivery_mode=2
+                )
             )
             
             print(f"📤 Mensagem enviada para fila ({settings.QUEUE_NAME}): {message.get('timestamp')}")

@@ -3,5 +3,9 @@ kind: Kustomization
 
 resources:
   - rabbitmq-configmap.yaml
-  - rabbitmq-deployment.yaml
+  - rabbitmq-statefulset.yaml        # ← NOVO
+  - rabbitmq-headless-service.yaml   # ← NOVO
+  # - rabbitmq-deployment.yaml
   - rabbitmq-service.yaml
+  - rabbitmq-pv.yaml
+  - rabbitmq-pvc.yaml
