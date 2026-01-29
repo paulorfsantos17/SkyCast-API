@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   python-producer:
     image: python:3.11
@@ -15,6 +17,7 @@ services:
         poetry install &&
         poetry run python main.py
       "
+
   rabbitmq:
     image: rabbitmq:3.11-management
     ports:
@@ -23,37 +26,50 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+
   worker-go:
     build:
       context: ./apps/worker_go
+      dockerfile: ./Dockerfile.dev
     container_name: worker_go
     working_dir: /app
     volumes:
       - ./apps/worker_go:/app    # <<< HOT RELOAD
     env_file:
-      - ./.env
+      - ./.env.development
     depends_on:
       - rabbitmq
       - python-producer
       - nest-dev
+      - redis # Adicionado para garantir que o worker também possa acessar o Redis se precisar
     restart: unless-stopped
+
   nest-dev:
     build:
       context: ./apps/api
+      dockerfile: ./Dockerfile.dev
     container_name: nest-dev
     working_dir: /app
     ports:
       - "3000:3000"
     volumes:
-      - ./apps/api:/app                     
+      - ./apps/api:/app    
+      - /app/node_modules     
+      - /app/dist               
     env_file:
-      - .env
+      - .env.development
     environment:
       - CI=true
       - PMPM_HOME=/app/.pnpm-store
+      - REDIS_HOST=redis 
+      - REDIS_PORT=6379  
+    depends_on: 
+      - redis
+      - mongo
     command: sh -c "
       pnpm install --force &&
       pnpm start:dev"
+
   mongo:
     image: mongo:7
     container_name: mongo
@@ -69,6 +85,7 @@ services:
   frontend:
     build:
       context: ./apps/frontend
+      dockerfile: ./Dockerfile.dev
     container_name: frontend
     working_dir: /app
     ports:
@@ -81,5 +98,17 @@ services:
     depends_on:
       - nest-dev
     restart: unless-stopped
+
+  redis:
+    image: redis:7.2
+    container_name: redis-nontls
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    user: root
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    restart: always
+
 volumes:
   mongo_data:

@@ -1,3 +1,4 @@
+import { AIInsightsCard } from "./components/AIInsightsCard";
 import { CurrentConditionCard } from "./components/CurrentConditionCard";
 import { CurrentHumidityCard } from "./components/CurrentHumidityCard";
 import { CurrentTemperatureCard } from "./components/CurrentTemperatureCard";
@@ -16,7 +17,7 @@ export const DashboardPage = () => {
       <CurrentHumidityCard />
       <CurrentWindSpeedCard />
       <CurrentConditionCard />
-      {/* <AIInsightsCard />  */}
+      <AIInsightsCard /> 
       <HistoricalTemperatureChartCard />
       <HistoricalHumidityChartCard />
       <HistoricalWindSpeedChartCard />

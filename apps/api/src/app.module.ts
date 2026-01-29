@@ -6,10 +6,16 @@ import { IdentityModule } from './modules/identity/identity.module';
 import { WeatherModule } from './modules/weather/weather.module';
 
 @Module({
-  imports: [MongoModule, WeatherModule, IdentityModule],
-  providers: [{
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard
-  }],
+  imports: [
+    MongoModule,
+    WeatherModule,
+    IdentityModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

@@ -8,11 +8,12 @@ import { GetWeatherLogs } from 'src/contexts/weather/application/use-cases/get-w
 import { WeatherController } from 'src/contexts/weather/infra/http/weather/weather.controller';
 import { MongoWeatherLogRepository } from 'src/contexts/weather/infra/repositories/mongo/mongo-weather-log-repository';
 import { WeatherMongoModule } from 'src/infra/database/mongodb/weather-mongo.module';
-
-
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
-  imports : [WeatherMongoModule],
+  imports: [WeatherMongoModule,
+    RedisModule,
+],
   controllers: [WeatherController],
   providers: [
     CreateWeatherLogUseCase,
@@ -24,8 +25,6 @@ import { WeatherMongoModule } from 'src/infra/database/mongodb/weather-mongo.mod
       provide: WeatherRepository,
       useClass: MongoWeatherLogRepository,
     },
-
   ],
-
 })
 export class WeatherModule {}
