@@ -50,6 +50,8 @@ lerna-debug.log*
 .env.local
 .env.development
 
+tree_structure.txt
+
 # temp directory
 .temp
 .tmp
