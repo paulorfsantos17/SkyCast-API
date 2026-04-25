@@ -1,8 +1,9 @@
 import { Header } from '@/components/layout/Header';
 import { ProtectedRoute } from '@/components/ProtectedRoutes';
 import LoginPage from '@/pages/auth/LoginPage';
+import RegisterPage from '@/pages/auth/RegisterPage';
 import { DashboardPage } from '@/pages/dashboard/DashboardPage';
-import { UsersPage } from '@/pages/user/UsersPage';
+import ProfilePage from '@/pages/user/ProfilePage';
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom';
 
 const ProtectedLayout = () => {
@@ -23,12 +24,13 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         <Route element={<ProtectedLayout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/users" element={<UsersPage />} /> 
+          <Route path="/profile" element={<ProfilePage />} /> 
         </Route>
 
       </Routes>

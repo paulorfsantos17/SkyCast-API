@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { JwtAuthGuard } from './contexts/identity/infra/auth/jwt-auth-guard';
 import { MongoModule } from './infra/database/mongo.module';
 import { IdentityModule } from './modules/identity/identity.module';
@@ -8,6 +9,7 @@ import { WeatherModule } from './modules/weather/weather.module';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot({global : true}),
     MongoModule,
     WeatherModule,
     IdentityModule,

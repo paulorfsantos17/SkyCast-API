@@ -11,6 +11,7 @@ import {
   UsePipes
 } from '@nestjs/common';
 
+import { CurrentUser, type CurrentUserPayload } from 'src/core/decorators/current-user-decorator';
 import { Public } from 'src/core/decorators/public-decorators';
 import { ZodValidationPipe } from 'src/core/pipes/zod-validation.pipe';
 import { CreateUser } from '../../application/use-cases/create-user';
@@ -45,14 +46,14 @@ export class UserController {
     return result;
   }
 
-  @Put(':id')
+  @Put()
   @HttpCode(HttpStatus.OK)
   async update(
-    @Param('id') id: string, 
+    @CurrentUser() user: CurrentUserPayload,
     @Body(new ZodValidationPipe(updateUserSchema)) body: UpdateUserDto
   ) {
     const result = await this.updateUser.execute({
-      id,
+      id: user.userId,
       name: body.name,
       password: body.password,
       role: body.role,
@@ -61,10 +62,10 @@ export class UserController {
     return result;
   }
 
-  @Get(':id')
+  @Get('me')
   @HttpCode(HttpStatus.OK)
-  async findOne(@Param('id') id: string) {
-    const result = await this.getUserById.execute({ id });
+  async findOne(@CurrentUser() user: CurrentUserPayload) {
+    const result = await this.getUserById.execute({ id : user.userId});
     return result;
   }
 
@@ -80,5 +81,7 @@ export class UserController {
   async remove(@Param('id') id: string) {
     await this.deleteUser.execute({ id });
   }
+
+
 
 }

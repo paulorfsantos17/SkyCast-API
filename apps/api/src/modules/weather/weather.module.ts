@@ -5,17 +5,15 @@ import { CreateWeatherLogUseCase } from 'src/contexts/weather/application/use-ca
 import { ExportWeatherLogs } from 'src/contexts/weather/application/use-cases/export-weather-logs.ts';
 import { GenerateWeatherInsights } from 'src/contexts/weather/application/use-cases/generate-weather-insights';
 import { GetWeatherLogs } from 'src/contexts/weather/application/use-cases/get-weather-logs';
+import { WeatherSseGateway } from 'src/contexts/weather/infra/http/weather/weather-sse.gateway';
 import { WeatherController } from 'src/contexts/weather/infra/http/weather/weather.controller';
 import { MongoWeatherLogRepository } from 'src/contexts/weather/infra/repositories/mongo/mongo-weather-log-repository';
 import { WeatherMongoModule } from 'src/infra/database/mongodb/weather-mongo.module';
-import { RedisModule } from '../redis/redis.module';
-
 @Module({
-  imports: [WeatherMongoModule,
-    RedisModule,
-],
+  imports: [WeatherMongoModule],
   controllers: [WeatherController],
   providers: [
+    WeatherSseGateway,
     CreateWeatherLogUseCase,
     GetWeatherLogs,
     ExportWeatherLogs,

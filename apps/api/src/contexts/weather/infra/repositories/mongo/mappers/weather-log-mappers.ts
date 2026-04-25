@@ -10,6 +10,7 @@ export class WeatherLogMapper {
         condition: raw.condition,
         rainProbability: raw.rainProbability,
         timestamp: raw.timestamp,
+        locationId: raw.locationId,
       },
       raw._id?.toString(),
     );

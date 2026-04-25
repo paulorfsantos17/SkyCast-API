@@ -1,39 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { WeatherRepository } from '../repositories/weather-repository';
 
-export interface GetWeatherLogsParams {
-  limit?: number;
-  skip?: number;
-  page?: number;
+export interface GetWeatherLogsByLocationIDParams {
+  locationId: string;
 }
 
 @Injectable()
 export class GetWeatherLogs {
   constructor(private weatherRepository: WeatherRepository) {}
 
-  async execute(params: GetWeatherLogsParams = {}) {
-    const {
-      limit = 100,
-      skip,
-      page,
-    } = params;
+  async execute(params: GetWeatherLogsByLocationIDParams) {
+    const { locationId } = params;
 
-    const calculatedSkip = page ? (page - 1) * limit : skip || 0;
-
-
-    const result = await this.weatherRepository.findAll({
-      limit,
-      skip: calculatedSkip,
-      sort: {timestamp :  -1},
-    });
-
+    const result = await this.weatherRepository.findAllByLocationId(locationId);
   return {
-      data: result.data,
-      pagination: {
-        total: result.total,
-        limit: result.limit,
-        skip: result.skip,
-      },
+      data: result
     };
   }
 }

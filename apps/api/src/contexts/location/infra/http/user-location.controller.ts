@@ -31,12 +31,13 @@ export class UserLocationController {
   @HttpCode(HttpStatus.CREATED)
   async create(
     @Body(new ZodValidationPipe(createUserLocationSchema)) body: CreateUserLocationDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user,
   ) {
     const { name, latitude, longitude, googlePlaceId } = body;
 
+
     const result = await this.createUserLocation.execute({
-      userId: user.id,
+      userId: user.userId,
       name,
       latitude,
       longitude,
@@ -63,9 +64,9 @@ export class UserLocationController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@CurrentUser() user: User) {
+  async findAll(@CurrentUser() user) {
     const userLocationsWithDetails = await this.getUserLocations.execute({
-      userId: user.id,
+      userId: user.userId,
     });
 
     return userLocationsWithDetails.map((item) => ({

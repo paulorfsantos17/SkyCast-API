@@ -1,38 +1,43 @@
 // src/services/weather.service.ts
 import {
   ApiLogsResponse,
-  ApiRawSingleInsightResponse, // Importe a interface para um único insight bruto
-} from '@/models/WeatherLog'
-import api from './api'
+  ApiRawSingleInsightResponse,
+} from '@/models/WeatherLog';
+import api from './api';
+
 
 export const weatherService = {
-  getLogs: async (params?: {
-    page?: number
-    limit?: number
-    startDate?: string
-    endDate?: string
+  getLogs: async (params: {
+    locationId: string;
+    startDate?: string;
+    endDate?: string;
+    limit?: number;
   }): Promise<ApiLogsResponse> => {
     const response = await api.get('/weather/logs', { params })
     return response.data
   },
-
-  exportCSV: async (): Promise<Blob> => {
+  exportCSV: async (locationId: string | undefined): Promise<Blob> => {
     const response = await api.get('/weather/export.csv', {
+      params: { locationId },
       responseType: 'blob',
     })
     return response.data
   },
 
-  exportXLSX: async (): Promise<Blob> => {
+  exportXLSX: async (locationId: string): Promise<Blob> => {
     const response = await api.get('/weather/export.xlsx', {
+      params: { locationId },
       responseType: 'blob',
     })
     return response.data
   },
 
+  getInsights: async (params: {
+    locationId: string,
+  }): Promise<ApiRawSingleInsightResponse> => {
 
-  getInsights: async (): Promise<ApiRawSingleInsightResponse> => { 
-    const response = await api.get('/weather/insights')
+    
+    const response = await api.get('/weather/insights', { params })
     return response.data
   },
 }

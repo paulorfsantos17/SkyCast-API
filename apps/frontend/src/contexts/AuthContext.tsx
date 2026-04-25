@@ -1,5 +1,6 @@
-import Cookies from 'js-cookie'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { userService } from '@/services/user.service'; // Importe userService para buscar o perfil
+import Cookies from 'js-cookie';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'; // Importe useCallback
 
 interface User {
   id: string
@@ -16,6 +17,7 @@ interface AuthContextType {
   logout: () => void
   isAuthenticated: boolean
   isLoading: boolean
+  refreshUser: () => Promise<void>; // <--- ADICIONE ESTA LINHA
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -26,19 +28,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [refreshToken, setRefreshToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
+  // Função para carregar o usuário dos cookies ou da API
+  const loadUserFromStorage = useCallback(async () => {
     const storedAccessToken = Cookies.get('accessToken')
     const storedRefreshToken = Cookies.get('refreshToken')
-    const storedUser = Cookies.get('user')
+    const storedUserString = Cookies.get('user')
 
-    if (storedAccessToken && storedRefreshToken && storedUser) {
-      setAccessToken(storedAccessToken)
-      setRefreshToken(storedRefreshToken)
-      setUser(JSON.parse(storedUser))
+    if (storedAccessToken && storedRefreshToken && storedUserString) {
+      try {
+        const storedUser: User = JSON.parse(storedUserString);
+        setAccessToken(storedAccessToken);
+        setRefreshToken(storedRefreshToken);
+        setUser(storedUser);
+
+        // Opcional: Se quiser garantir que os dados do usuário estão sempre atualizados com o backend
+        // você pode chamar userService.getMyProfile() aqui e atualizar o user state.
+        // const fetchedUser = await userService.getMyProfile();
+        // setUser(fetchedUser);
+
+      } catch (error) {
+        console.error("Erro ao parsear usuário do cookie:", error);
+        // Limpa cookies inválidos
+        Cookies.remove('accessToken');
+        Cookies.remove('refreshToken');
+        Cookies.remove('user');
+        setAccessToken(null);
+        setRefreshToken(null);
+        setUser(null);
+      }
     }
+    setIsLoading(false);
+  }, []);
 
-    setIsLoading(false)
-  }, [])
+  useEffect(() => {
+    loadUserFromStorage();
+  }, [loadUserFromStorage]);
 
   const login = (newAccessToken: string, newRefreshToken: string, newUser: User) => {
     Cookies.set('accessToken', newAccessToken, { expires: 1 / 96 }) // 15 minutos
@@ -60,6 +84,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null)
   }
 
+  // Implementação da função refreshUser
+  const refreshUser = useCallback(async () => {
+    // Esta função pode recarregar o usuário diretamente do backend
+    // ou simplesmente re-parsear do cookie se você preferir.
+    // Para garantir que os dados estejam atualizados com o backend, é melhor buscar:
+    try {
+      const fetchedUser = await userService.getMyProfile();
+      setUser(fetchedUser);
+      // Atualiza o cookie 'user' também para consistência
+      Cookies.set('user', JSON.stringify(fetchedUser), { expires: 7 });
+    } catch (error) {
+      console.error("Erro ao recarregar perfil do usuário:", error);
+      // Se houver erro ao recarregar, pode significar que o token expirou ou é inválido
+      // Neste caso, você pode querer deslogar o usuário
+      logout();
+    }
+  }, [logout]); // Depende de logout para deslogar em caso de erro
+
   return (
     <AuthContext.Provider
       value={{
@@ -70,6 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         isAuthenticated: !!accessToken,
         isLoading,
+        refreshUser, // <--- ADICIONE ESTA PROPRIEDADE AO VALUE
       }}
     >
       {children}

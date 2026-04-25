@@ -1,11 +1,15 @@
 import { Toaster } from './components/ui/toaster';
+import { LocationProvider } from './contexts/LocationContext';
 import { AppRoutes } from './routes/AppRoutes';
 
 function App() {
   return (
   <>
-    <AppRoutes />
-    <Toaster /></>
+    <LocationProvider>
+      <AppRoutes />
+      <Toaster />
+    </LocationProvider>
+  </>
   )
 }
 

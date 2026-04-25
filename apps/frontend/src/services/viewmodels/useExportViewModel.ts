@@ -1,4 +1,5 @@
 // src/viewmodels/useExportViewModel.ts
+import { useLocationContext } from '@/contexts/LocationContext'
 import { weatherService } from '@/services/weather.service'
 import { useCallback, useState } from 'react'
 
@@ -6,6 +7,7 @@ export const useExportViewModel = () => {
   const [loadingCSV, setLoadingCSV] = useState(false)
   const [loadingXLSX, setLoadingXLSX] = useState(false)
   const [errorExport, setErrorExport] = useState<string | null>(null)
+  const {locationId} = useLocationContext()
 
   const handleExport = useCallback(async (format: 'csv' | 'xlsx') => {
     setErrorExport(null)
@@ -15,11 +17,11 @@ export const useExportViewModel = () => {
 
       if (format === 'csv') {
         setLoadingCSV(true)
-        blob = await weatherService.exportCSV()
+        blob = await weatherService.exportCSV(locationId || '')
         filename = `weather_logs_${new Date().toISOString()}.csv`
       } else { // format === 'xlsx'
         setLoadingXLSX(true)
-        blob = await weatherService.exportXLSX()
+        blob = await weatherService.exportXLSX(locationId || '')
         filename = `weather_logs_${new Date().toISOString()}.xlsx`
       }
 

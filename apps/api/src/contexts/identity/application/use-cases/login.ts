@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '../repositories/user-repository';
 import { HashService } from '../service/hash-service';
 import { TokenService } from '../service/token-service';
@@ -38,10 +38,10 @@ export class Login {
       request.password,
       user.password,
     );
-
     if (!isPasswordValid) {
-      throw new Error('Credenciais inválidas');
+      throw new UnauthorizedException('Credenciais inválidas');
     }
+
 
     const tokenPayload = {
       sub: user.id,

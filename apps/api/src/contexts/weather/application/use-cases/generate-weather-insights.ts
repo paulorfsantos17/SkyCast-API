@@ -1,28 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { WeatherRepository } from 'src/contexts/weather/application/repositories/weather-repository';
-import { GeminiAIService } from 'src/contexts/weather/application/services/gemini-ai.service';
-import { WeatherInsight } from 'src/contexts/weather/domain/entities/weather-insight';
-import { RedisService } from '../services/redis.service';
-
+import { Injectable, UnprocessableEntityException } from '@nestjs/common'
+import { WeatherRepository } from 'src/contexts/weather/application/repositories/weather-repository'
+import { GeminiAIService } from 'src/contexts/weather/application/services/gemini-ai.service'
+import { WeatherInsight } from 'src/contexts/weather/domain/entities/weather-insight'
+import { RedisService } from '../../../../modules/redis/redis.service'
 
 export interface GenerateWeatherInsightsRequest {
-  days?: number;
+  days?: number
+  locationId: string
 }
 
 export interface GenerateWeatherInsightsResponse {
   insight: {
-    id: string;
-    summary: string;
-    trends: string[];
-    recommendations: string[];
+    id: string
+    summary: string
+    trends: string[]
+    recommendations: string[]
     period: {
-      start: Date;
-      end: Date;
-    };
-    dataPointsAnalyzed: number;
-    generatedAt: Date;
-  };
-  fromCache?: boolean;
+      start: Date
+    }
+    dataPointsAnalyzed: number
+    generatedAt: Date
+  }
+  fromCache?: boolean
 }
 
 @Injectable()
@@ -34,44 +33,45 @@ export class GenerateWeatherInsights {
   ) {}
 
   async execute(
-    request: GenerateWeatherInsightsRequest = {},
+    request: GenerateWeatherInsightsRequest,
   ): Promise<GenerateWeatherInsightsResponse> {
-    const days = request.days || 7;
-    const cacheKey = `weather:insights:${days}days`;
+    const days = request.days ?? 7
+    const { locationId } = request
 
-    // 1. Tente buscar do cache
-    const cachedInsight = await this.redisService.get(cacheKey);
-    if (cachedInsight) {
-      return {
-        ...JSON.parse(cachedInsight),
-        fromCache: true,
-      };
+    const cacheKey = `weather:insights:${locationId}:${days}days`
+
+    const cached =
+      await this.redisService.getJson<GenerateWeatherInsightsResponse>(cacheKey)
+    if (cached) {
+      return { ...cached, fromCache: true }
     }
 
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    const endDate = new Date()
+    const startDate = new Date()
+    startDate.setDate(startDate.getDate() - days)
 
-    const result = await this.weatherRepository.findAll({
-      sort: { timestamp: -1 },
-    });
+    const result = await this.weatherRepository.findAllByLocationId(
+      locationId,
+    )
 
-    if (result.data.length === 0) {
-      throw new Error('Não há dados suficientes para gerar insights');
+    // CORREÇÃO: O throw deve estar DENTRO do if
+    if (result.length === 0) {
+      throw new UnprocessableEntityException(
+        'Não há dados de clima suficientes para gerar insights para a localização e período especificados.',
+      )
     }
 
-    const weatherData = result.data.map((log) => ({
+    const weatherData = result.map((log) => ({
       temperature: log.temperature,
       humidity: log.humidity,
       windSpeed: log.windSpeed,
       condition: log.condition,
       rainProbability: log.rainProbability,
       timestamp: log.timestamp,
-    }));
+    }))
 
-    const aiResponse = await this.geminiAIService.generateWeatherInsights(
-      weatherData,
-    );
+    const aiResponse =
+      await this.geminiAIService.generateWeatherInsights(weatherData)
 
     const insight = WeatherInsight.create({
       summary: aiResponse.summary,
@@ -79,11 +79,11 @@ export class GenerateWeatherInsights {
       recommendations: aiResponse.recommendations,
       periodStart: startDate,
       periodEnd: endDate,
-      dataPointsAnalyzed: result.data.length,
+      dataPointsAnalyzed: result.length,
       generatedAt: new Date(),
-    });
+    })
 
-    const response = {
+    const response: GenerateWeatherInsightsResponse = {
       insight: {
         id: insight.id,
         summary: insight.summary,
@@ -91,21 +91,15 @@ export class GenerateWeatherInsights {
         recommendations: insight.recommendations,
         period: {
           start: insight.periodStart,
-          end: insight.periodEnd,
         },
         dataPointsAnalyzed: insight.dataPointsAnalyzed,
         generatedAt: insight.generatedAt,
       },
       fromCache: false,
-    };
+    }
 
-    // 2. Salve no cache com expiração de 1 hora (3600 segundos)
-    await this.redisService.set(
-      cacheKey,
-      JSON.stringify(response),
-      3600,
-    );
+    await this.redisService.setJson(cacheKey, response, 3600)
 
-    return response;
+    return response
   }
 }

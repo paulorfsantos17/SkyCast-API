@@ -7,12 +7,18 @@ export interface WeatherLogProps {
   condition: string;
   rainProbability: number;
   timestamp: string;
+  locationId: string
 }
 
 export class WeatherLog extends BaseEntity<WeatherLogProps> {
   private constructor(props: WeatherLogProps, id?: string) {
     super(props, id);
   }
+
+  get locationId() {
+    return this.props.locationId;
+  }
+  
 
   get temperature() {
     return this.props.temperature;

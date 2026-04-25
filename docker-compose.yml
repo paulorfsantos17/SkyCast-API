@@ -1,31 +1,37 @@
 version: '3.8'
 
 services:
+
   python-producer:
-    image: python:3.11
+    build:
+      context: ./apps/producer-python
+      dockerfile: dockerfile
+    container_name: weather-producer
     working_dir: /app
-    volumes:
-      - ./apps/producer-python:/app
     env_file:
       - ./.env
     depends_on:
-      - rabbitmq
-    command: >
-      sh -c "
-        pip install poetry &&
-        poetry config virtualenvs.create false &&
-        poetry install &&
-        poetry run python main.py
-      "
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   rabbitmq:
     image: rabbitmq:3.11-management
+    container_name: rabbitmq
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   worker-go:
     build:
@@ -34,14 +40,16 @@ services:
     container_name: worker_go
     working_dir: /app
     volumes:
-      - ./apps/worker_go:/app    # <<< HOT RELOAD
+      - ./apps/worker_go:/app
     env_file:
       - ./.env.development
     depends_on:
-      - rabbitmq
-      - python-producer
-      - nest-dev
-      - redis # Adicionado para garantir que o worker também possa acessar o Redis se precisar
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      nest-dev:
+        condition: service_started
     restart: unless-stopped
 
   nest-dev:
@@ -53,22 +61,23 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./apps/api:/app    
-      - /app/node_modules     
-      - /app/dist               
+      - ./apps/api:/app
+      - /app/node_modules
+      - /app/dist
     env_file:
       - .env.development
     environment:
       - CI=true
-      - PMPM_HOME=/app/.pnpm-store
-      - REDIS_HOST=redis 
-      - REDIS_PORT=6379  
-    depends_on: 
-      - redis
-      - mongo
-    command: sh -c "
-      pnpm install --force &&
-      pnpm start:dev"
+      - PNPM_HOME=/app/.pnpm-store
+      - REDIS_HOST=redis-nontls   # container_name do redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+    command: sh -c "pnpm install --force && pnpm start:dev"
+    restart: unless-stopped
 
   mongo:
     image: mongo:7
@@ -96,7 +105,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - nest-dev
+      nest-dev:
+        condition: service_started
     restart: unless-stopped
 
   redis:
@@ -109,6 +119,11 @@ services:
     user: root
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
 volumes:
   mongo_data:

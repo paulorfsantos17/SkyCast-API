@@ -7,7 +7,9 @@ import { GetWeatherLogs } from "src/contexts/weather/application/use-cases/get-w
 import { Public } from "src/core/decorators/public-decorators";
 import { ZodValidationPipe } from "src/core/pipes/zod-validation.pipe";
 import { CreateWeatherLogSchema, type CreateWeatherLogDTO } from "../../dtos/create-weather-log-dto";
+import { GetWeatherInsightsQuerySchema, type GetWeatherInsightsQueryDTO } from "../../dtos/get-weather-insights-dto";
 import { GetWeatherLogsQuerySchema, type GetWeatherLogsQueryDTO } from "../../dtos/get-weather-logs-dtos";
+import { WeatherSseGateway } from "./weather-sse.gateway";
 
 @Controller("weather")
 export class WeatherController {
@@ -15,13 +17,15 @@ export class WeatherController {
     private readonly getWeatherLogs: GetWeatherLogs, 
     private readonly createWeather: CreateWeatherLogUseCase,
     private readonly exportWeatherLogs: ExportWeatherLogs,
-    private readonly generateWeatherInsights: GenerateWeatherInsights
+    private readonly generateWeatherInsights: GenerateWeatherInsights,
+    private readonly weatherSseGateway: WeatherSseGateway,
   ) {}
 
   @Post("/log")
   @Public()
   @UsePipes(new ZodValidationPipe(CreateWeatherLogSchema))
   async handle(@Body() body: CreateWeatherLogDTO) {
+
     return await this.createWeather.execute(body);
   }
 
@@ -32,8 +36,11 @@ export class WeatherController {
   }
 
   @Get("/export.csv")
-  async exportCsv(@Res() res: Response) {
-    const buffer = await this.exportWeatherLogs.execute('csv');
+  @UsePipes(new ZodValidationPipe(GetWeatherLogsQuerySchema))
+  async exportCsv(
+    @Query() query: GetWeatherLogsQueryDTO,
+    @Res() res: Response) {
+    const buffer = await this.exportWeatherLogs.execute('csv', query.locationId);
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', 'attachment; filename="weather-logs.csv"');
@@ -41,22 +48,39 @@ export class WeatherController {
   }
 
   @Get("/export.xlsx")
-  async exportXlsx(@Res() res: Response) {
-    const buffer = await this.exportWeatherLogs.execute('xlsx');
+  @UsePipes(new ZodValidationPipe(GetWeatherLogsQuerySchema))
+  async exportXlsx(
+    @Query() query: GetWeatherLogsQueryDTO,
+    @Res() res: Response) {
+    const buffer = await this.exportWeatherLogs.execute('xlsx', query.locationId);
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename="weather-logs.xlsx"');
     res.send(buffer);
   }
 
-  
   @Get('/insights')
-  async getInsights(@Query('days') days?: string) {
-    const result = await this.generateWeatherInsights.execute({
-      days: days ? parseInt(days) : 7,
+  @UsePipes(new ZodValidationPipe(GetWeatherInsightsQuerySchema))
+  async getInsights(@Query() query: GetWeatherInsightsQueryDTO) {
+    return await this.generateWeatherInsights.execute({
+      locationId: query.locationId,
+      days: query.days ? parseInt(query.days) : 7,
     });
+  }
 
-    return result;
+  
+  @Get('events')
+  @Public()
+  subscribeToEvents(
+    @Query('locationId') locationId: string,
+    @Res() res: Response,
+  ) {
+    if (!locationId) {
+      res.status(400).json({ message: 'locationId é obrigatório' });
+      return;
+    }
+
+    this.weatherSseGateway.addClient(locationId, res);
   }
 
 }

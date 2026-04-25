@@ -8,10 +8,8 @@ export type ExportFormat = 'csv' | 'xlsx';
 export class ExportWeatherLogs {
   constructor(private weatherRepository: WeatherRepository) {}
 
-  async execute(format: ExportFormat = 'csv') {
-    const result = await this.weatherRepository.findAll({
-      sort: { timestamp: -1 },
-    });
+  async execute(format: ExportFormat = 'csv', locationId: string) {
+    const result = await this.weatherRepository.findAllByLocationId(locationId);
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Weather Logs');
@@ -25,10 +23,11 @@ export class ExportWeatherLogs {
       { header: 'Condition', key: 'condition', width: 25 },
       { header: 'Rain Probability', key: 'rainProbability', width: 20 },
       { header: 'Timestamp', key: 'timestamp', width: 25 },
+      { header: 'Location ID', key: 'locationId', width: 30 },
     ];
 
     // Adicionar dados
-    result.data.forEach(log => {
+    result.forEach(log => {
       worksheet.addRow({
         id: log.id,
         temperature: log.temperature,
@@ -37,6 +36,7 @@ export class ExportWeatherLogs {
         condition: log.condition,
         rainProbability: log.rainProbability,
         timestamp: log.timestamp.toString(),
+        locationId: log.locationId
       });
     });
 

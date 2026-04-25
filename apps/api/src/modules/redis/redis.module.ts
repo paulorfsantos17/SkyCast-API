@@ -1,25 +1,27 @@
-// src/infra/redis/redis.module.ts
+// apps/api/src/modules/redis/redis.module.ts
 import { RedisModule as NestRedisModule } from '@nestjs-modules/ioredis';
-import { Module } from '@nestjs/common';
-import { RedisService } from 'src/contexts/weather/application/services/redis.service';
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisService } from './redis.service';
 
-const redisHost = process.env.REDIS_HOST || 'localhost';
-
-const redisPort = process.env.REDIS_PORT || '6379';
-
-const redisUrl = `redis://${redisHost}:${redisPort}`;
-
-console.log('Redis connection URL being used by NestJS:', redisUrl);
-
-
+@Global()
 @Module({
   imports: [
-    NestRedisModule.forRoot({
-      type: 'single',
-      url: redisUrl,
+    NestRedisModule.forRootAsync({
+      imports: [ConfigModule], // ← resolve o problema do ConfigService
+      useFactory: (config: ConfigService) => {
+        const host = config.get<string>('REDIS_HOST', 'localhost');
+        const port = config.get<string>('REDIS_PORT', '6379');
+        const url = `redis://${host}:${port}`;
+
+        console.log('Redis connection URL:', url);
+
+        return { type: 'single', url };
+      },
+      inject: [ConfigService],
     }),
   ],
-  providers: [RedisService], 
+  providers: [RedisService],
   exports: [RedisService],
 })
 export class RedisModule {}

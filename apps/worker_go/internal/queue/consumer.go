@@ -32,14 +32,18 @@ func Consume(ch *amqp.Channel, queueName string) error {
             fmt.Printf("❌ Erro ao deserializar mensagem: %v\n", err)
             continue
         }
+        fmt.Printf("✅ Mensagem deserializada: %v\n", weatherMsgBroken)
 
         weatherMsg := models.WeatherMessage{
             Temperature: weatherMsgBroken.Temperature,
-						Humidity: weatherMsgBroken.Humidity,
-						WindSpeed: weatherMsgBroken.WindSpeed,
-						Condition: weatherMsgBroken.Condition,
-						RainProbability: weatherMsgBroken.RainProbability,
-						Timestamp: weatherMsgBroken.Timestamp,   }
+			Humidity: weatherMsgBroken.Humidity,
+			WindSpeed: weatherMsgBroken.WindSpeed,
+			Condition: weatherMsgBroken.Condition,
+			RainProbability: weatherMsgBroken.RainProbability,
+			Timestamp: weatherMsgBroken.Timestamp,
+            Location: weatherMsgBroken.Location,
+            LocationId: weatherMsgBroken.LocationId,
+        }
 
         go service.ProcessWeatherData(weatherMsg)
     }

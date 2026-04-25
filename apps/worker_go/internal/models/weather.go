@@ -5,6 +5,8 @@ type WeatherMessageBroken struct {
     WindSpeed         float64 `json:"wind_speed"`
     Condition         string  `json:"condition"`
     RainProbability   float64 `json:"rain_probability"`
+    Location          string  `json:"location"`
+    LocationId        string  `json:"location_id"`
     Timestamp         string  `json:"timestamp"`
 }
 
@@ -15,4 +17,6 @@ type WeatherMessage struct {
     Condition         string  `json:"condition"`
     RainProbability   float64 `json:"rainProbability"`
     Timestamp         string  `json:"timestamp"`
+    Location          string  `json:"location"`
+    LocationId        string  `json:"locationId"`
 }

@@ -6,7 +6,8 @@ export const CreateWeatherLogSchema = z.object({
   windSpeed: z.number(),
   condition: z.string(),
   rainProbability: z.number(),
-  timestamp: z.string().datetime(),
+  timestamp: z.string().datetime().optional(),
+  locationId: z.string().uuid(),
 });
 
 export type CreateWeatherLogDTO = z.infer<typeof CreateWeatherLogSchema>;

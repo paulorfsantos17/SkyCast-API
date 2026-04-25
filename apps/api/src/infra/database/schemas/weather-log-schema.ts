@@ -11,6 +11,7 @@ export class WeatherLog {
   @Prop({ required: true }) condition: string;
   @Prop({ required: true }) rainProbability: number;
   @Prop({ required: true }) timestamp: string;
+  @Prop({ required: true }) locationId: string;
 }
 
 export const WeatherLogSchema = SchemaFactory.createForClass(WeatherLog);

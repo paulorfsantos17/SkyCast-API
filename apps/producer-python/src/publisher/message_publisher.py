@@ -41,6 +41,7 @@ class MessagePublisher:
                     raise Exception(f"Não foi possível conectar ao RabbitMQ após {self.max_retries} tentativas.")
 
     def publish(self, message: dict):
+        print("message", message)
         """Cria conexão, publica mensagem e fecha imediatamente"""
         connection = None
         try:
