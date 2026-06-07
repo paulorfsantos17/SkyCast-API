@@ -15,7 +15,6 @@ spec:
       labels:
         app: api
     spec:
-      # InitContainer: aguarda o MongoDB estar pronto
       initContainers:
       - name: wait-for-mongo
         image: mongo:7
@@ -24,53 +23,139 @@ spec:
           - -c
           - |
             echo "Aguardando MongoDB aceitar conexões autenticadas..."
-            until mongosh --host mongo-service --port 27017 -u root -p root --authenticationDatabase admin --eval "db.adminCommand('ping')" > /dev/null 2>&1; do
+            # Usando o nome do Service do MongoDB
+            # Nota: O mongosh precisa estar disponível na imagem mongo:7
+            # Se não estiver, pode precisar de uma imagem com ferramentas de cliente Mongo
+            until mongosh --host $(MONGO_HOST) --port $(MONGO_PORT) -u $(MONGO_USERNAME) -p $(MONGO_PASSWORD) --authenticationDatabase $(MONGO_AUTH_SOURCE) --eval "db.adminCommand('ping')" > /dev/null 2>&1; do
               echo "MongoDB ainda não está pronto. Tentando novamente em 3 segundos..."
               sleep 3
             done
             echo "MongoDB está pronto! Iniciando API..."
-
+        env: # Adicionando as credenciais para o initContainer
+          - name: MONGO_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: MONGO_USERNAME
+          - name: MONGO_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: api-secret
+                key: MONGO_PASSWORD
+          - name: MONGO_HOST # Adicionado para o initContainer
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: MONGO_HOST
+          - name: MONGO_PORT # Adicionado para o initContainer
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: MONGO_PORT
+          - name: MONGO_AUTH_SOURCE # Adicionado para o initContainer
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: MONGO_AUTH_SOURCE
 
       containers:
         - name: api
-          image: prfs/api-nest:v1
+          image: 5546155105753.dkr.ecr.us-east-1.amazonaws.com/skycast-api:latest
           imagePullPolicy: Always
+          command: ["npm", "run", "start"]
+          # REMOVA ESTA LINHA CRÍTICA:
+          # command: ["tail", "-f", "/dev/null"]
           ports:
             - containerPort: 3000
 
           env:
+            # Variáveis do Redis
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: REDIS_PORT
+
+            # Porta da aplicação
             - name: PORT
               valueFrom:
                 configMapKeyRef:
                   name: api-config
                   key: PORT
 
+            # Variáveis do MongoDB (para montagem da URI e uso direto)
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: MONGO_USERNAME
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: MONGO_PASSWORD
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: MONGO_HOST
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: MONGO_PORT
+            - name: MONGO_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: MONGO_DB
+            - name: MONGO_AUTH_SOURCE
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: MONGO_AUTH_SOURCE
+            # MONGO_URI construída
             - name: MONGO_URI
-              valueFrom:
-                configMapKeyRef:
-                  name: api-config
-                  key: MONGO_URI
+              value: "mongodb://$(MONGO_USERNAME):$(MONGO_PASSWORD)@$(MONGO_HOST):$(MONGO_PORT)/$(MONGO_DB)?authSource=$(MONGO_AUTH_SOURCE)"
 
-            - name: RABBITMQ_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: api-config
-                  key: RABBITMQ_URL
+        
 
+            # Chaves JWT
             - name: JWT_ACCESS_SECRET
               valueFrom:
                 secretKeyRef:
                   name: api-secret
                   key: JWT_ACCESS_SECRET
-
             - name: JWT_REFRESH_SECRET
               valueFrom:
                 secretKeyRef:
                   name: api-secret
                   key: JWT_REFRESH_SECRET
+
+            # Chaves de API
             - name: GEMINI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: api-secret
                   key: GEMINI_API_KEY
-          # Liveness: verifica se a API está respondendo
+            - name: GOOGLE_MAPS_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: GOOGLE_MAPS_API_KEY
+
+       
+
+          # Definindo recursos (CPU e Memória)
+          resources:
+            requests:
+              memory: "3.5Gi" # Solicita 1.5 GB de memória
+              cpu: "100m"    # Solicita 0.1 CPU core
+            limits:
+              memory: "4.5Gi" # Limita a 2.5 GB de memória
+              cpu: "200m"    # Limita a 0.2 CPU core

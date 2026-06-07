@@ -69,4 +69,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 *-configmap.yaml
 *-configmap.yml
 *-secret.yaml
-*-secret.yml
+*-secret.yml.terraform/
+**/.terraform/
+**/.terraform/

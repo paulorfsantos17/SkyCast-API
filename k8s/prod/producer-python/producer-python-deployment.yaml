@@ -29,7 +29,7 @@ spec:
               echo "RabbitMQ está pronto!"
       containers:
         - name: producer-python
-          image: prfs/producer-python:v1
+          image: 546155105753.dkr.ecr.us-east-1.amazonaws.com/skycast-producer-python:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

@@ -1,7 +1,7 @@
 import { useLocationContext } from "@/contexts/LocationContext";
 import { useHistoricalWeatherLogsViewModel } from "@/services/viewmodels/useHistoricalWeatherLogsViewModel";
 import { useWeatherLogsViewModel } from "@/services/viewmodels/useWeatherLogsViewModel";
-import { motion } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import { AIInsightsCard } from "./components/AIInsightsCard";
 import { CitySelectionCard } from "./components/CitySelectionCard";
 import { CurrentConditionCard } from "./components/CurrentConditionCard";
@@ -15,7 +15,7 @@ import { HistoricalWindSpeedChartCard } from "./components/HistoricalWindSpeedCh
 
 export const DashboardPage = () => {
   const { locationId } = useLocationContext();
-  const { latestLog, loading, error, exportCSV, exportXLSX } = useWeatherLogsViewModel();
+  const { latestLog, loading, error,  } = useWeatherLogsViewModel();
   const {
     historicalLogs,
     errorHistoricalLogs,
@@ -24,7 +24,7 @@ export const DashboardPage = () => {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as Transition["ease"] } },
   };
 
   if (!locationId) {

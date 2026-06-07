@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label"; // Importe o componente Label
 import { useProfileViewModel } from "@/services/viewmodels/useUsersViewModel";
-import { motion } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import { Loader2, UserCircle2 } from "lucide-react";
 
 export default function ProfilePage() {
@@ -22,13 +22,13 @@ export default function ProfilePage() {
   // Variantes para animação do card principal
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as Transition["ease"] } },
   };
 
   // Variantes para animação dos itens dentro do formulário
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as Transition["ease"] } },
   };
 
   return (

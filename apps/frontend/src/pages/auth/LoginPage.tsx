@@ -1,6 +1,6 @@
 // src/pages/LoginPage.tsx (Sem alterações significativas, apenas para referência)
 import { Label } from "@radix-ui/react-label";
-import { motion } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
@@ -12,12 +12,12 @@ export default function LoginPage() {
 
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as Transition["ease"] } },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as Transition["ease"] } },
   };
 
   return (

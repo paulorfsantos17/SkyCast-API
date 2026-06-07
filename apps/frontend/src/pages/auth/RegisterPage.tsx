@@ -1,7 +1,7 @@
 import { useRegisterViewModel } from "@/services/viewmodels/useRegisterViewModel";
 import { Label } from "@radix-ui/react-label";
-import { motion } from "framer-motion"; // Importe motion
-import { UserPlus } from "lucide-react";
+import { motion, type Transition } from "framer-motion"; // Importe motion
+import { Loader2, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card";
@@ -17,13 +17,13 @@ export default function RegisterPage() {
   // Variantes para a animação do card principal
   const cardVariants = {
     hidden: { opacity: 0, scale: 0.95 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" as Transition["ease"] } },
   };
 
   // Variantes para os itens dentro do formulário (para staggered animation)
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" as Transition["ease"]} },
   };
 
   return (

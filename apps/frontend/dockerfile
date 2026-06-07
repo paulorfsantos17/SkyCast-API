@@ -3,11 +3,15 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Adicione ARG e ENV para VITE_API_URL
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copiar package files
 COPY package*.json ./
 
-# Instalar dependências
-RUN npm ci --only=production
+# Instalar TODAS as dependências para o build
+RUN npm ci # <--- Removido --only=production
 
 # Copiar código fonte
 COPY . .
@@ -21,7 +25,7 @@ FROM nginx:alpine
 # Copiar arquivos buildados do stage anterior
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copiar configuração customizada do Nginx (opcional, mas recomendado)
+# Copiar configuração customizada do Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

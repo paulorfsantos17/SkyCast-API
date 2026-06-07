@@ -21,7 +21,7 @@ spec:
           command: ['sh', '-c', 'until nc -z rabbitmq-service 5672; do echo waiting for rabbitmq; sleep 2; done;']
       containers:
         - name: worker-go
-          image: prfs/worker-go:v1
+          image: 546155105753.dkr.ecr.us-east-1.amazonaws.com/skycast-worker-go:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

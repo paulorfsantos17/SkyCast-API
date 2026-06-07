@@ -9,10 +9,20 @@ import (
 )
 
 func Consume(ch *amqp.Channel, queueName string) error {
-
+    q, err := ch.QueueDeclare(
+        queueName,
+        true,
+        false,
+        false,
+        false,
+        nil,
+    )
+    if err != nil {
+        return fmt.Errorf("Erro ao declarar a fila '%s': %w", queueName, err)
+    }
 
     messages, err := ch.Consume(
-        queueName,
+        q.Name,
         "worker_go",
         true,
         false,
@@ -21,12 +31,14 @@ func Consume(ch *amqp.Channel, queueName string) error {
         nil,
     )
     if err != nil {
-        return err
+        return fmt.Errorf("Erro ao iniciar o consumo da fila '%s': %w", q.Name, err)
     }
+
+    fmt.Printf("Worker Go aguardando mensagens na fila '%s'. Para sair, pressione CTRL+C\n", q.Name)
 
     for msg := range messages {
         fmt.Printf("📦 Mensagem recebida: %s\n", string(msg.Body))
-        var weatherMsgBroken models.WeatherMessageBroken 
+        var weatherMsgBroken models.WeatherMessageBroken
         err := json.Unmarshal(msg.Body, &weatherMsgBroken)
         if err != nil {
             fmt.Printf("❌ Erro ao deserializar mensagem: %v\n", err)
@@ -36,11 +48,11 @@ func Consume(ch *amqp.Channel, queueName string) error {
 
         weatherMsg := models.WeatherMessage{
             Temperature: weatherMsgBroken.Temperature,
-			Humidity: weatherMsgBroken.Humidity,
-			WindSpeed: weatherMsgBroken.WindSpeed,
-			Condition: weatherMsgBroken.Condition,
-			RainProbability: weatherMsgBroken.RainProbability,
-			Timestamp: weatherMsgBroken.Timestamp,
+            Humidity: weatherMsgBroken.Humidity,
+            WindSpeed: weatherMsgBroken.WindSpeed,
+            Condition: weatherMsgBroken.Condition,
+            RainProbability: weatherMsgBroken.RainProbability,
+            Timestamp: weatherMsgBroken.Timestamp,
             Location: weatherMsgBroken.Location,
             LocationId: weatherMsgBroken.LocationId,
         }

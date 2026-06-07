@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { motion } from 'framer-motion';
+import { motion, Transition } from 'framer-motion';
 import { CloudSun } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -14,7 +14,7 @@ export const Header = () => {
       y: 0,
       transition: {
         duration: 0.5,
-        ease: "easeOut",
+        ease: [0.17, 0.67, 0.83, 0.67] as Transition["ease"],
         when: "beforeChildren",
         staggerChildren: 0.1,
       },
@@ -23,7 +23,7 @@ export const Header = () => {
 
   const itemVariants = {
     hidden: { opacity: 0, y: -10 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3,  ease: [0.17, 0.67, 0.83, 0.67] as Transition["ease"], } },
   };
 
   return (

@@ -4,7 +4,7 @@ metadata:
   name: api-service
   namespace: production
 spec:
-  type: NodePort
+  type: NodePort # Considerar LoadBalancer ou Ingress para produção
   selector:
     app: api
   ports:
